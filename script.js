@@ -3,10 +3,10 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.pathofexile.com/trade*
 // @grant       none
-// @version     1.3
+// @version     1.4
 // @author      CerikNguyen
 // @license MIT
-// @description 4/8/2024, 5:47:21 AM
+// @description Aggregates the number of listings per account name and provides a whisper button for each account name on the Path of Exile Trade website.
 // @downloadURL https://update.greasyfork.org/scripts/491939/Path%20Of%20Exile%20Trade%20Aggregator%20pathofexilecomtrade.user.js
 // @updateURL https://update.greasyfork.org/scripts/491939/Path%20Of%20Exile%20Trade%20Aggregator%20pathofexilecomtrade.meta.js
 // ==/UserScript==/initializing  the main injecting div
@@ -78,16 +78,24 @@ document.body.appendChild(showButton);
 function extractResultsDiv() {
     const results = document.body.querySelectorAll('.resultset');
     if (results.length === 0) {
-        console.error('No results found.');
-        aggregator.innerHTML = 'An error occurred. Please refresh the page and paste the script again.';
-        return;
+        return null;
     }
-    return results[0];
+
+    // Collect arrays of child nodes
+    const childNodesArrays = Array.from(results).map(result => Array.from(result.childNodes));
+
+    // Flatten the array of arrays into a single array
+    const flattened = childNodesArrays.flat();
+
+    return flattened;
 }
 
 function extractResults() {
-    const results = extractResultsDiv();
-    return results.childNodes;
+    const res = extractResultsDiv();
+    if (!res) {
+        return [];
+    }
+    return res;
 }
 
 function initAggregator() {
@@ -138,7 +146,9 @@ function initAggregator() {
     document.getElementById('refresh').addEventListener('click', () => {
         // Reset the counts and reprocess the nodes to get the latest counts
         resetAllCounts();
-        processNodes(extractResults());
+        const results = extractResults();
+        // console.log(results);
+        processNodes(results);
         updateAggregator();
     });
 
@@ -147,15 +157,19 @@ function initAggregator() {
     aggregator.appendChild(resultList);
 
     // Initial check in case the page has already loaded
-    document.addEventListener('DOMContentLoaded', () => {
-        processNodes(extractResults());
-        updateAggregator();
-    });
+    processNodes(extractResults());
+    updateAggregator();
 }
 
 // Function to update the floating div with the latest counts and whisper buttons
 function updateAggregator() {
     const resultsList = document.getElementById('results-list');
+
+    if (!resultsList) {
+        initAggregator();
+        return;
+    }
+
     resultsList.innerHTML = ''; // Clear previous results
 
     // Calculate total listings per account
