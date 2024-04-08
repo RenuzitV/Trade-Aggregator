@@ -1,5 +1,16 @@
-// please help me refactor this piece of crap
-//inittializing the main injecting div
+/// ==UserScript==
+// @name        Path Of Exile Trade Aggregator pathofexile.com/trade
+// @namespace   Violentmonkey Scripts
+// @match       https://www.pathofexile.com/*
+// @grant       none
+// @version     1.1
+// @author      CerikNguyen
+// @license MIT
+// @description 4/8/2024, 5:47:21 AM
+// @downloadURL https://update.greasyfork.org/scripts/491939/Path%20Of%20Exile%20Trade%20Aggregator%20pathofexilecomtrade.user.js
+// @updateURL https://update.greasyfork.org/scripts/491939/Path%20Of%20Exile%20Trade%20Aggregator%20pathofexilecomtrade.meta.js
+// ==/UserScript==/initializing  the main injecting div
+
 const aggregator = document.createElement('div');
 aggregator.id = 'aggregator';
 aggregator.classList.add('results');
@@ -55,6 +66,7 @@ showButton.style.zIndex = '1001'; // Ensure it's above the aggregator
 showButton.addEventListener('click', () => {
     aggregator.style.transform = 'translateX(0)';
     showButton.style.display = 'none';
+    localStorage.setItem('aggregatorState', 'open'); // Update localStorage
 });
 
 if (document.body.querySelector('button#show')) {
@@ -100,9 +112,22 @@ function initAggregator() {
         </div>
     `;
 
+    // Check localStorage for the aggregator's state
+    const aggregatorState = localStorage.getItem('aggregatorState');
+
+    if (aggregatorState === 'closed') {
+        aggregator.style.transform = 'translateX(100%)';
+        showButton.style.display = 'block'; // Show the "Show" button
+    } else {
+        // By default or if the state is 'open', the aggregator is visible
+        aggregator.style.transform = 'translateX(0)';
+        showButton.style.display = 'none';
+    }
+
     document.getElementById('hide').addEventListener('click', () => {
         aggregator.style.transform = 'translateX(100%)';
         showButton.style.display = 'block';
+        localStorage.setItem('aggregatorState', 'closed');
     });
 
     document.getElementById('clear-all').addEventListener('click', () => {
@@ -121,15 +146,11 @@ function initAggregator() {
     resultList.id = 'results-list';
     aggregator.appendChild(resultList);
 
-    const searchButton = document.querySelector('button.search-btn');
-    searchButton.addEventListener('click', () => {
-        console.log("search button clicked");
-        resetAllCounts();
+    // Initial check in case the page has already loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        processNodes(extractResults());
         updateAggregator();
     });
-
-    processNodes(extractResults());
-    updateAggregator();
 }
 
 // Function to update the floating div with the latest counts and whisper buttons
@@ -282,5 +303,4 @@ const config = { childList: true, subtree: true };
 // Start observing the body for changes
 observer.observe(document.body, config);
 
-// Initial check in case the page has already loaded
 initAggregator();
