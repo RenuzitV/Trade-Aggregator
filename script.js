@@ -3,13 +3,13 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.pathofexile.com/trade*
 // @grant       none
-// @version     1.4
+// @version     1.5
 // @author      CerikNguyen
 // @license MIT
 // @description Aggregates the number of listings per account name and provides a whisper button for each account name on the Path of Exile Trade website.
-// @downloadURL https://update.greasyfork.org/scripts/491939/Path%20Of%20Exile%20Trade%20Aggregator%20pathofexilecomtrade.user.js
-// @updateURL https://update.greasyfork.org/scripts/491939/Path%20Of%20Exile%20Trade%20Aggregator%20pathofexilecomtrade.meta.js
-// ==/UserScript==/initializing  the main injecting div
+// ==/UserScript==
+
+//initializing  the main injecting div
 
 const aggregator = document.createElement('div');
 aggregator.id = 'aggregator';
