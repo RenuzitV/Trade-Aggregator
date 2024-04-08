@@ -32,6 +32,6 @@ This allows you to aggregate all account names that match your desired filter, w
 
 <h2> Installation:</h2>
 
-You can get this tool by installing the ViolentMonkey Extension, and then installing the Path of Exile Trade Aggregator Extension. I have not set up a Google Developer account yet so I could not have posted this as a Chrome extension. Sorry about that.
+You can get this tool by installing the [ViolentMonkey](https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag) Extension, and then installing the [Path of Exile Trade Aggregator Extension](https://greasyfork.org/en/scripts/491939-path-of-exile-trade-aggregator-pathofexile-com-trade). I have not set up a Google Developer account yet so I could not have posted this as a Chrome extension. Sorry about that.
 
 May your trades go well, and your bulk trades go even better!
