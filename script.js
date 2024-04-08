@@ -1,9 +1,9 @@
 /// ==UserScript==
 // @name        Path Of Exile Trade Aggregator pathofexile.com/trade
 // @namespace   Violentmonkey Scripts
-// @match       https://www.pathofexile.com/*
+// @match       https://www.pathofexile.com/trade*
 // @grant       none
-// @version     1.1
+// @version     1.3
 // @author      CerikNguyen
 // @license MIT
 // @description 4/8/2024, 5:47:21 AM
