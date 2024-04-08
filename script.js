@@ -1,9 +1,9 @@
 /// ==UserScript==
-// @name        Path Of Exile Trade Aggregator
+// @name        PathOfExile-Trade-Aggregator
 // @namespace   Violentmonkey Scripts
 // @match       https://www.pathofexile.com/trade*
 // @grant       none
-// @version     1.7
+// @version     1.8
 // @author      CerikNguyen
 // @license MIT
 // @description Aggregates the number of listings per account name and provides a whisper button for each account name on the Path of Exile Trade website.
