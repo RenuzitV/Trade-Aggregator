@@ -1,5 +1,5 @@
 /// ==UserScript==
-// @name        Path Of Exile Trade Aggregator pathofexile.com/trade
+// @name        Path Of Exile Trade Aggregator
 // @namespace   Violentmonkey Scripts
 // @match       https://www.pathofexile.com/trade*
 // @grant       none
