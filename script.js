@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.pathofexile.com/trade*
 // @grant       none
-// @version     1.0.2
+// @version     1.0.2.1
 // @author      CerikNguyen
 // @license MIT
 // @description Aggregates the number of listings per account name and displays a whisper button for each account name in the Path Of Exile trade site.
@@ -149,8 +149,6 @@ tbody tr:nth-child(even) {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
     background-color: rgba(0, 0, 0, 1);
     padding: 5px;
     z-index: 1000;
@@ -215,7 +213,7 @@ aboutDiv.innerHTML = `
     <span> This extension aggregates the all listings under the same account name and displays a whisper button for each account name in the Path Of Exile trade site. </span>
     <br/>
     <br/>
-    <span> Change Log: </span>
+    <span> Changelog: </span>
     <br/>
     <ul>
         <li> Minor UI tweaks </li>
