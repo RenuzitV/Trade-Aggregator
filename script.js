@@ -3,41 +3,23 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.pathofexile.com/trade*
 // @grant       none
-// @version     1.0.1
+// @version     1.0.2
 // @author      CerikNguyen
 // @license MIT
 // @description Aggregates the number of listings per account name and displays a whisper button for each account name in the Path Of Exile trade site.
 // @downloadURL none
 // ==/UserScript==
 
-//initializing  the main injecting div
+// ------------------------------------------------- helper functions -------------------------------------------------
 
-const aggregator = document.createElement('div');
-aggregator.id = 'aggregator';
-aggregator.classList.add('results');
-aggregator.style.position = 'fixed';
-aggregator.style.top = '0';
-aggregator.style.right = '0';
-aggregator.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-aggregator.style.padding = '10px';
-aggregator.style.zIndex = '1000';
-aggregator.textContent = 'Loading...';
-
-if (document.body.querySelector('#aggregator')) {
-    document.body.querySelector('#aggregator').remove();
+// helper function to add an element to the DOM
+function addElement(parent, elm) {
+    const tmp = parent.querySelector(`#${elm.id}`);
+    if (tmp) {
+        tmp.remove();
+    }
+    parent.appendChild(elm);
 }
-
-document.body.appendChild(aggregator);
-
-// Object to hold the counts and whisper button links of each account name
-const accountData = {};
-
-// Set to hold listing keys to avoid duplicates
-const listings = new Set();
-
-// Extract the logged-in user's account name, preventing aggregated search of own listings
-const loggedInUserElement = document.querySelector('.loggedInStatus .profile-link a');
-const loggedInUsername = loggedInUserElement ? loggedInUserElement.textContent : null;
 
 function resetCountByListing(accountName, listingKey) {
     delete accountData[accountName][listingKey];
@@ -53,28 +35,6 @@ function resetAllCounts() {
     }
     listings.clear();
 }
-
-const showButton = document.createElement('button');
-showButton.id = 'show';
-showButton.classList.add('btn', 'btn-default');
-showButton.textContent = 'Show Aggregator';
-showButton.style.position = 'fixed';
-showButton.style.display = 'none';
-showButton.style.top = '50px'; // 50 pixels below the top of the page
-showButton.style.right = '0';
-showButton.style.zIndex = '1001'; // Ensure it's above the aggregator
-
-showButton.addEventListener('click', () => {
-    aggregator.style.transform = 'translateX(0)';
-    showButton.style.display = 'none';
-    localStorage.setItem('aggregatorState', 'open'); // Update localStorage
-});
-
-if (document.body.querySelector('button#show')) {
-    document.body.querySelector('button#show').remove();
-}
-
-document.body.appendChild(showButton);
 
 function extractResultsDiv() {
     const results = document.body.querySelectorAll('.resultset');
@@ -99,43 +59,217 @@ function extractResults() {
     return res;
 }
 
+// Object to hold the counts and whisper button links of each account name
+const accountData = {};
+
+// Set to hold listing keys to avoid duplicates
+const listings = new Set();
+
+// Extract the logged-in user's account name, preventing aggregated search of own listings
+const loggedInUserElement = document.querySelector('.loggedInStatus .profile-link a');
+const loggedInUsername = loggedInUserElement ? loggedInUserElement.textContent : null;
+
+// ------------------------------------------------- element initialization ------------------------------------------------
+// styling css
+const style = document.createElement('style');
+style.id = 'aggregator-style';
+
+style.innerHTML = `
+
+#aggregator {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 5px;
+    z-index: 1000;
+    transition: right 0.2s ease 0s;
+}
+
+#showAggregator {
+    position: fixed;
+    top: 50px;
+    right: 0;
+    z-index: 1001;
+    transition: right 0.2s ease 0s;
+}
+
+/*
+compatibility with Better Trading
+*/
+
+.bt-body > #aggregator,
+.bt-body > #showAggregator {
+    right: 400px; /* Adjust based on the width of the other extension */
+    top: 100px;
+}
+
+.bt-is-collapsed > #aggregator,
+.bt-is-collapsed > #showAggregator {
+    right: 0; /* Move it back when the other extension is collapsed */
+    top: 100px;
+}
+
+#results-table {
+    border-spacing: 0 0.4em;
+    border-collapse: separate;
+}
+
+.actions-cell {
+    display: flex;
+    justify-content: center;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.text-cell {
+    text-align: center;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.action-button{
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.thead-cell{
+    padding: 5px;
+}
+
+tbody tr:nth-child(even) {
+    background-color: rgba(50, 50, 50, 0.7);
+}
+
+#hide-about {
+    margin: 5px;
+}
+
+.aboutDiv {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 1);
+    padding: 5px;
+    z-index: 1000;
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+ul {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+
+`;
+
+addElement(document.head, style);
+
+//initializing  the main injecting div
+const aggregator = document.createElement('div');
+aggregator.id = 'aggregator';
+aggregator.classList.add('aggregator', 'results', 'bt-body');
+
+const aggregatorInnerHTML = `
+    <button id="hide" class="btn btn-default">Hide</button>
+    <button id="clear-all" class="btn btn-default">Clear All</button>
+    <button id="refresh" class="btn btn-default">Refresh</button>
+    <button id="about" class="btn btn-default">About</button>
+    <div class="table-responsive" style="margin: 5px">
+        <table id="results-table" class="table">
+            <thead>
+                <tr>
+                    <th class="thead-cell">Account Name</th>
+                    <th class="thead-cell">Amount Listed</th>
+                    <th class="thead-cell">Count</th>
+                    <th class="thead-cell">Total</th>
+                    <th class="thead-cell">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="results-list">
+            </tbody>
+        </table>
+    </div>
+`;
+
+addElement(document.body, aggregator);
+
+const aboutDiv = document.createElement('div');
+aboutDiv.id = 'aboutDiv';
+aboutDiv.classList.add('aboutDiv');
+aboutDiv.innerHTML = `
+
+    <button id="hide-about" class="btn btn-default">Close</button>
+    <h3> Path Of Exile Trade Aggregator </h3>
+    <br/>
+    <span> This extension aggregates the all listings under the same account name and displays a whisper button for each account name in the Path Of Exile trade site. </span>
+    <br/>
+    <br/>
+    <span> Change Log: </span>
+    <br/>
+    <ul>
+        <li> Minor UI tweaks </li>
+        <li> "Whisper" now becomes "Whispered" after clicking </li>
+        <li> Alternate row color for better readability </li>
+        <li> Added an about section </li>
+        <li> Added a Kofi link for donation. Thank you for your support! </li>
+    </ul>
+    <br/>
+    <a href='https://ko-fi.com/H2H4WPVOX' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
+`;
+
+aboutDiv.querySelector('#hide-about').addEventListener('click', () => {
+    aboutDiv.style.display = 'none';
+});
+
+const showButton = document.createElement('button');
+showButton.id = 'showAggregator';
+showButton.classList.add('btn', 'btn-default');
+showButton.textContent = 'Show Aggregator';
+
+showButton.addEventListener('click', () => {
+    aggregator.classList.remove('hidden');
+    showButton.classList.add('hidden');
+    localStorage.setItem('aggregatorState', 'open'); // Update localStorage
+});
+
+addElement(document.body, showButton);
+
 function initAggregator() {
-    aggregator.innerHTML = `
-        <button id="hide" class="btn btn-default">Hide</button>
-        <button id="clear-all" class="btn btn-default">Clear All</button>
-        <button id="refresh" class="btn btn-default">Refresh</button>
-        <div class="table-responsive" style="margin: 5px">
-            <table id="results-table" class="table">
-                <thead>
-                    <tr>
-                        <th style="padding: 5px">Account Name</th>
-                        <th style="padding: 5px">Amount Listed</th>
-                        <th style="padding: 5px">Count</th>
-                        <th style="padding: 5px">Total</th>
-                        <th style="padding: 5px">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="results-list">
-                </tbody>
-            </table>
-        </div>
-    `;
+    aggregator.innerHTML = aggregatorInnerHTML;
+
+    addElement(aggregator, aboutDiv);
+
+    aggregator.querySelector('#about').addEventListener('click', () => {
+        aboutDiv.style.display = 'block';
+    });
 
     // Check localStorage for the aggregator's state
     const aggregatorState = localStorage.getItem('aggregatorState');
 
     if (aggregatorState === 'closed') {
-        aggregator.style.transform = 'translateX(100%)';
-        showButton.style.display = 'block'; // Show the "Show" button
+        aggregator.classList.add('hidden');
+        showButton.classList.remove('hidden');
     } else {
         // By default or if the state is 'open', the aggregator is visible
-        aggregator.style.transform = 'translateX(0)';
-        showButton.style.display = 'none';
+        aggregator.classList.remove('hidden');
+        showButton.classList.add('hidden');
     }
 
     document.getElementById('hide').addEventListener('click', () => {
-        aggregator.style.transform = 'translateX(100%)';
-        showButton.style.display = 'block';
+        aggregator.classList.add('hidden');
+        showButton.classList.remove('hidden');
         localStorage.setItem('aggregatorState', 'closed');
     });
 
@@ -152,10 +286,6 @@ function initAggregator() {
         processNodes(results);
         updateAggregator();
     });
-
-    const resultList = document.createElement('div');
-    resultList.id = 'results-list';
-    aggregator.appendChild(resultList);
 
     // Initial check in case the page has already loaded
     processNodes(extractResults());
@@ -189,54 +319,46 @@ function updateAggregator() {
             const row = document.createElement('tr');
 
             const accountCell = document.createElement('td');
+            accountCell.classList.add('text-cell');
             accountCell.textContent = account;
-            accountCell.style.textAlign = 'center';
-            accountCell.style.paddingLeft = '5px';
-            accountCell.style.paddingRight = '5px';
 
             const amountListedCell = document.createElement('td');
+            amountListedCell.classList.add('text-cell');
             amountListedCell.textContent = listingKey;
-            amountListedCell.style.textAlign = 'center';
-            amountListedCell.style.paddingLeft = '5px';
-            amountListedCell.style.paddingRight = '5px';
 
             const countCell = document.createElement('td');
+            countCell.classList.add('text-cell');
             countCell.textContent = data.count;
-            countCell.style.textAlign = 'center';
-            countCell.style.paddingLeft = '5px';
-            countCell.style.paddingRight = '5px';
 
             const totalCell = document.createElement('td');
-
-            listingPrice = parseFloat(listingKey.split(" ")[0]);
+            totalCell.classList.add('text-cell');
+            listingPrice = Number.parseFloat(listingKey.split(" ")[0]);
             //get currency as the rest of the string
             listingCurrency = listingKey.split(" ").slice(1).join(" ");
             totalCell.textContent = `${listingPrice * data.count} ${listingCurrency}`;
-            totalCell.style.textAlign = 'center';
-            totalCell.style.paddingLeft = '5px';
-            totalCell.style.paddingRight = '5px';
+
 
             const actionsCell = document.createElement('td');
+            actionsCell.classList.add('actions-cell');
+
             const whisperButton = document.createElement('button');
-            whisperButton.classList.add('btn', 'btn-xs', 'btn-default');
+            whisperButton.classList.add('btn', 'btn-xs', 'btn-default', 'action-button');
             whisperButton.textContent = 'Whisper';
-            whisperButton.style.marginLeft = '5px';
             whisperButton.addEventListener('click', () => {
+                row.classList.add('whispered');
+                whisperButton.textContent = 'Whispered';
                 data.whisperButton.click();
             });
 
             const resetButton = document.createElement('button');
-            resetButton.classList.add('btn', 'btn-xs', 'btn-default');
+            resetButton.classList.add('btn', 'btn-xs', 'btn-default', 'action-button');
             resetButton.textContent = 'Clear';
-            resetButton.style.marginLeft = '5px';
             resetButton.addEventListener('click', () => {
                 delete accountData[account][listingKey];
                 updateAggregator();
             });
             actionsCell.appendChild(whisperButton);
             actionsCell.appendChild(resetButton);
-            actionsCell.style.paddingLeft = '5px';
-            actionsCell.style.paddingRight = '5px';
 
             row.appendChild(accountCell);
             row.appendChild(amountListedCell);
