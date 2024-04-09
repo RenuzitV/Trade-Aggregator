@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.pathofexile.com/trade*
 // @grant       none
-// @version     1.0.2
+// @version     1.0.2.1
 // @author      CerikNguyen
 // @license MIT
 // @description Aggregates the number of listings per account name and displays a whisper button for each account name in the Path Of Exile trade site.
