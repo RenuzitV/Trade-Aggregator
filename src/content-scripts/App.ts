@@ -74,8 +74,6 @@ export class AppRoot extends LitElement {
 			max-width: 600px;
 		}
 
-		${poeButtonStyles}
-
 		.aggregator {
 			position: relative;
 		}
