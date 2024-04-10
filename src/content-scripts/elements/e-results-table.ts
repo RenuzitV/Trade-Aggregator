@@ -12,7 +12,7 @@ declare global {
 
 /**
  * @event whisper-click - emits listing id CustomEvent<string>
- * @event clear-click = emits listing id CustomEvent<string>
+ * @event clear-click - emits listing id CustomEvent<string>
  */
 @customElement('e-results-table')
 export class ResultsTableElement extends LitElement {
