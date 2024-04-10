@@ -78,7 +78,7 @@ style.innerHTML = `
 
 #aggregator {
     position: fixed;
-    top: 1000px;
+    top: 0;
     right: 0;
     background-color: rgba(0, 0, 0, 0.7);
     padding: 5px;
