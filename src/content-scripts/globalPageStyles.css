@@ -1,0 +1,9 @@
+.bt-body > app-root {
+	right: 400px; /* Adjust based on the width of the other extension */
+	top: 100px;
+}
+
+.bt-is-collapsed > app-root {
+	right: 0; /* Move it back when the other extension is collapsed */
+	top: 100px;
+}
