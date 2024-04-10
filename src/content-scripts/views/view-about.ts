@@ -1,6 +1,6 @@
-import { poeButtonStyles } from '../poeButtons.style';
 import { LitElement, html, css, TemplateResult } from 'lit';
 import { customElement } from 'lit/decorators.js';
+import '../elements/poe-button';
 
 declare global {
 	interface HTMLElementTagNameMap {
@@ -15,7 +15,7 @@ declare global {
 export class AboutView extends LitElement {
 	protected render(): TemplateResult {
 		return html`<div id="aboutDiv" class="aboutDiv">
-			<button @click=${this.#emitCloseClick} id="hide-about" class="btn btn-default">Close</button>
+			<poe-button @click=${this.#emitCloseClick} id="hide-about">Close</poe-button>
 			<h3>Path Of Exile Trade Aggregator</h3>
 			<br />
 			<span>
@@ -55,8 +55,6 @@ export class AboutView extends LitElement {
 			margin: 0;
 			box-sizing: border-box;
 		}
-
-		${poeButtonStyles}
 
 		.aboutDiv {
 			background-color: rgba(0, 0, 0, 1);

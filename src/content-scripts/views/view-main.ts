@@ -1,7 +1,7 @@
-import { poeButtonStyles } from '../poeButtons.style';
 import { LitElement, html, css, TemplateResult, PropertyValueMap } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import '../elements/e-results-table';
+import '../elements/poe-button';
 import { ListingKey, Listing, extractResults, processNodes } from '../listings';
 
 declare global {
@@ -23,10 +23,10 @@ export class MainView extends LitElement {
 
 	protected render(): TemplateResult {
 		return html`<main id="main">
-			<button @click=${this.#emitHideClick} id="hide" class="btn btn-default">Hide</button>
-			<button @click=${this.#resetAllCounts} id="clear-all" class="btn btn-default">Clear All</button>
-			<button @click=${this.#refresh} id="refresh" class="btn btn-default">Refresh</button>
-			<button @click=${this.#emitAboutClick} id="about" class="btn btn-default">About</button>
+			<poe-button @click=${this.#emitHideClick} id="hide">Hide</poe-button>
+			<poe-button @click=${this.#resetAllCounts} id="clear-all">Clear All</poe-button>
+			<poe-button @click=${this.#refresh} id="refresh">Refresh</poe-button>
+			<poe-button @click=${this.#emitAboutClick} id="about">About</poe-button>
 			<e-results-table
 				@whisper-click=${this.#onWhisperClick}
 				@clear-click=${this.#onClearClick}
@@ -122,7 +122,5 @@ export class MainView extends LitElement {
 			margin: 0;
 			box-sizing: border-box;
 		}
-
-		${poeButtonStyles}
 	`;
 }

@@ -1,8 +1,8 @@
-import { poeButtonStyles } from '../poeButtons.style';
 import { LitElement, html, css, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Listing } from '../listings';
 import { classMap } from 'lit/directives/class-map.js';
+import './poe-button';
 
 declare global {
 	interface HTMLElementTagNameMap {
@@ -43,21 +43,16 @@ export class ResultsTableElement extends LitElement {
 								<td class="text-cell">${count}</td>
 								<td class="text-cell">${listingPrice * count} ${listingCurrency}</td>
 								<td class="actions-cell">
-									<button
+									<poe-button
+										size="small"
 										.disabled=${whispered}
 										@click=${() => this.#emitWhisperClick(id)}
-										class="btn btn-xs btn-default action-button"
-										type="button"
 									>
 										${whispered ? 'Whispered' : 'Whisper'}
-									</button>
-									<button
-										@click=${() => this.#emitClearClick(id)}
-										class="btn btn-xs btn-default action-button"
-										type="button"
-									>
+									</poe-button>
+									<poe-button size="small" @click=${() => this.#emitClearClick(id)}>
 										Clear
-									</button>
+									</poe-button>
 								</td>
 							</tr>
 						`;
@@ -81,8 +76,6 @@ export class ResultsTableElement extends LitElement {
 			margin: 0;
 			box-sizing: border-box;
 		}
-
-		${poeButtonStyles}
 
 		#results-table {
 			border-spacing: 0 0.4em;
