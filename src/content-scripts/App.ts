@@ -1,6 +1,5 @@
 import { LitElement, html, css, TemplateResult, PropertyValueMap } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { poeButtonStyles } from './poeButtons.style';
 
 import './views/view-main';
 import './views/view-about';
