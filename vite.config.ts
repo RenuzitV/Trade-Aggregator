@@ -15,7 +15,7 @@ export default defineConfig({
 							'src/content-scripts/main.ts',
 							'node_modules/@webcomponents/custom-elements/custom-elements.min.js',
 						],
-						matches: ['https://*.pathofexile.com/*'],
+						matches: ['https://*.pathofexile.com/trade/*'],
 					},
 				],
 			},
