@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
+		"build:monkey": "tsc && vite --config monkey.vite.config.ts build",
 		"preview": "vite preview"
 	},
 	"devDependencies": {
