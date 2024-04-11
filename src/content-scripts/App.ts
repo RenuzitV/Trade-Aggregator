@@ -30,9 +30,9 @@ export class AppRoot extends LitElement {
 							: html`<view-about @close-click=${this.#onCloseAboutClick}></view-about>`}
 				  `
 				: html`
-						<button @click=${this.#onShowAggregatorClick} id="showAggregator" class="btn btn-default">
+						<poe-button @click=${this.#onShowAggregatorClick} id="showAggregator">
 							Show Aggregator
-						</button>
+						</poe-button>
 				  `}
 		</div>`;
 	}
