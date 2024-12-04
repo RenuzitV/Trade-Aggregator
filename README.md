@@ -1,6 +1,6 @@
 <h1> Path of Exile Aggregator, a trade macro embedded in the native trade site for bulk trading in single search mode! </h1>
 
-Reddit Post: [link](https://www.reddit.com/r/pathofexile/comments/1bymwsi/path_of_exile_aggregator_a_bulk_trade_alternative/)
+[Reddit Post](https://www.reddit.com/r/pathofexile/comments/1bymwsi/path_of_exile_aggregator_a_bulk_trade_alternative/)
 
 <h2> Showcase: </h2>
 
