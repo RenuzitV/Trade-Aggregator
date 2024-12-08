@@ -1,0 +1,21 @@
+{
+	"name": "trade-aggregator",
+	"private": true,
+	"version": "1.0.2.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"build:monkey": "tsc && vite --config monkey.vite.config.ts build",
+		"preview": "vite preview"
+	},
+	"devDependencies": {
+		"@crxjs/vite-plugin": "^2.0.0-beta.23",
+		"typescript": "^5.2.2",
+		"vite": "^5.2.0"
+	},
+	"dependencies": {
+		"@webcomponents/custom-elements": "^1.6.0",
+		"lit": "^3.1.2"
+	}
+}
