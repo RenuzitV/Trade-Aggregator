@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.pathofexile.com/trade*
 // @grant       none
-// @version     1.0.2.1
+// @version     1.0.2.2
 // @author      CerikNguyen
 // @license MIT
 // @description Aggregates the number of listings per account name and displays a whisper button for each account name in the Path Of Exile trade site.
@@ -387,8 +387,11 @@ function processNodes(addedNodes) {
         const whisperButton = node.querySelector ? node.querySelector('button.direct-btn') : null;
         const priceField = node.querySelector ? node.querySelector('div.price span[data-field="price"]') : null;
         if (!priceField) return;
-        const priceSpan = priceField.querySelector ? priceField.childNodes[3] : null;
-        const currencySpan = priceField.querySelector ? priceField.childNodes[5] : null;
+        const priceSpan = priceField.querySelector ? priceField.childNodes[4] : null;
+        const currencyField = priceField.querySelector ? priceField.childNodes[6] : null;
+        // console.log(currencyField);
+        const currencySpan = currencyField.querySelector ? currencyField.childNodes[1] : null;
+        // console.log(currencySpan);
         const errorSpan = node.querySelector ? node.querySelector('span.error') : null;
 
         if (errorSpan) {
